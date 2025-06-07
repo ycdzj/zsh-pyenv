@@ -1,16 +1,15 @@
-if command -v pyenv >/dev/null 2>&1; then
+() {
   export PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"
   export PATH="$PYENV_ROOT/bin:$PATH"
+  command -v pyenv >/dev/null 2>&1 || return
 
   eval "$(pyenv init -)"
 
-  () {
-    local -a pyenv_cmds=(${(f)"$(pyenv commands)"})
-    # Check if $pyenv_cmds contains virtualenv-init
-    if (( $pyenv_cmds[(Ie)virtualenv-init] )); then
-      eval "$(pyenv virtualenv-init -)"
-    fi
-  }
+  local -a pyenv_cmds=(${(f)"$(pyenv commands)"})
+  # Check if $pyenv_cmds contains virtualenv-init
+  if (( $pyenv_cmds[(Ie)virtualenv-init] )); then
+    eval "$(pyenv virtualenv-init -)"
+  fi
 
   _pyenv() {
     local words completions
@@ -26,4 +25,4 @@ if command -v pyenv >/dev/null 2>&1; then
   }
 
   compctl -K _pyenv pyenv
-fi
+}
